@@ -1,35 +1,40 @@
 const express = require("express");
 const propertyRouter = express.Router();
-const property = require("../model/property_schema");
-const testSchema = require("../model/test");
+const Property = require("../model/property_schema");
 
 
+propertyRouter.get("/v1/",(req,res)=>{
+    const page = parseInt(req.query.page) || 1;
+    const skip = (page-1)*limit;
+    const limit = 10;
 
-propertyRouter.get("/v1/", (req, res) => {
-    res.status(200).json({
-        message: "hello world"
+    Property.find().skip(skip).limit(limit).then(res=>{
+        res.status(200).json({
+            message : "Property details fetched successfully",
+            data : res
+        })
+    }).catch(err=>{
+        res.status(500).json({
+            message: "Internal server error",
+            error: err
+        })
     })
 })
 
-propertyRouter.post("/v1/", (req, res) => {
-
-    const model = req.body;
-    console.log("post api")
-    const testdata = new testSchema({
-        name: model.name
+propertyRouter.post("/v1/",(req,res)=>{
+    const testData = req.body;
+    const test = new Property({
+        name : testData.name
     })
-    testdata.save().then(rec => {
+    test.save().then(response=>{
         res.status(200).json({
-            data: rec,
+            message : response
         })
-
+    }).catch(err=>{
+        res.status(500).json({
+            errordesc:err
+        })
     })
-        .catch(err => {
-            res.json({
-                error: err
-            })
-        })
-
 })
 
 propertyRouter.put("/v1/update/:id", (req, res) => {

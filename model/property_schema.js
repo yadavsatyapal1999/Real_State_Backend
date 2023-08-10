@@ -1,8 +1,4 @@
 const mongoose = require("mongoose");
-
-
-
-
 const propertySchema = mongoose.Schema({
     ppdid: { type: String, required: true },
     property_type: { type: String, required: true },
