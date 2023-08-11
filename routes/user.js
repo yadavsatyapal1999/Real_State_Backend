@@ -7,6 +7,7 @@ require('dotenv').config();
 
 
 userRouter.post("/v1/register",(req,res)=>{
+    
     const {email,password} = req.body;
     
     bcrypt.hash(password,10).then(hashPass=>{
