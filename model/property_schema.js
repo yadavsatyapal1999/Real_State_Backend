@@ -1,8 +1,11 @@
 const mongoose = require("mongoose");
+const User = require('./user')
+
 const propertySchema = mongoose.Schema({
+    user : {type:mongoose.Schema.Types.ObjectId,ref : User, required:true},    
     ppdid: { type: String, required: true },
     property_type: { type: String, required: true },
-    price: { type: Number, required: true },
+    price: { type: String, required: true },
     property_age: { type: String, required: true },
     property_description: { type: String },
     negotiable: { type: String },
@@ -16,10 +19,10 @@ const propertySchema = mongoose.Schema({
     bhk: { type: String },
     floor: { type: String },
     attached: { type: String },
-    western: { type: Boolean },
+    western: { type: String },
     furnished: { type: String, required: true },
-    parking: { type: Boolean },
-    lift: { type: Boolean },
+    parking: { type: String },
+    lift: { type: String },
     electricity: { type: String },
     facing: { type: String, required: true },
     owner_name: { type: String, required: true },
@@ -28,7 +31,7 @@ const propertySchema = mongoose.Schema({
     saletype: { type: String },
     featured: { type: String },
     ppdpackage: { type: String },
-    photo: { type: String },
+    image: { type: String },
     email: { type: String, required: true },
     city: { type: String, required: true },
     addressarea: { type: String },
