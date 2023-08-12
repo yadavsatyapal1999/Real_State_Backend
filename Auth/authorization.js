@@ -11,7 +11,9 @@ const auth = (req, res, next) => {
         next();
     }
     catch {
-        res.send("authentication failed");  // error
+        res.status(400).json({
+            message:"Authentication failed"
+         }) // error
     }
 
 }

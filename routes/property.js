@@ -2,16 +2,29 @@ const express = require("express");
 const propertyRouter = express.Router();
 const Property = require("../model/property_schema");
 const auth = require('../Auth/authorization');
+const multer = require("multer");
+const path = require("path")
 
-propertyRouter.get("/v1/", (req, res) => {
+const storage = multer.diskStorage({
+    destination : (req,file,cb)=>{
+        cb(null,"uploads")
+    },
+    filename: (req,file,cb)=>{
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+    }
+})
+const upload = multer({storage});
+
+propertyRouter.get("/v1/getproperty", (req, res) => {
     const page = parseInt(req.query.page) || 1;
-    const skip = (page - 1) * limit;
     const limit = 10;
+    const skip = (page - 1) * limit;
+    
 
-    Property.find().skip(skip).limit(limit).then(res => {
+    Property.find().skip(skip).limit(limit).then(result => {
         res.status(200).json({
             message: "Property details fetched successfully",
-            data: res
+            data: result
         })
     }).catch(err => {
         res.status(500).json({
@@ -21,12 +34,26 @@ propertyRouter.get("/v1/", (req, res) => {
     })
 })
 
-propertyRouter.post("/v1/addproperty", auth, (req, res) => {
-    const data = req.body;  // need to provide data in body
+propertyRouter.post("/v1/addproperty",upload.single("propertyimage"),(req, res) => {
 
+    // const ppd_id = "PPD";
+    // const existingProp = Property.find().sort({_id: -1}).limit(1);
+    // if(existingProp.length!=0){
+    //     ppd_id = parseInt(existingProp[0].ppdid.split("D")[1]) + 1;
+    // }else{
+    //     ppd_id = 1100;
+    // }
+    const data = req.body;  // need to provide data in body
+    const area = parseInt(data.length) * parseInt(data.breadth);
+    const views = parseInt(Math.random() * 30);
+    const daysleft = parseInt(Math.random()*40);
     const propertyData = new Property({ //add new property
         user: req.id,    // get id from token
-        ppdid: data.ppdid,
+        ppdid: "PPD",
+        views: views,
+        daysleft : daysleft,
+        status:"unsold",
+        image : req.file.filename, // coming from multer
         property_type: data.property_type,
         price: data.price,
         property_age: data.property_age,
@@ -36,8 +63,8 @@ propertyRouter.post("/v1/addproperty", auth, (req, res) => {
         property_approved: data.property_approved,
         bank_lone: data.bank_lone,
         length: data.length,
-        breath: data.breath,
-        area: data.area,
+        breadth: data.breath,
+        area: area,
         area_unit: data.area_unit,
         bhk: data.bhk,
         floor: data.floor,
@@ -54,7 +81,6 @@ propertyRouter.post("/v1/addproperty", auth, (req, res) => {
         saletype: data.saletype,
         featured: data.featured,
         ppdpackage: data.ppdpackage,
-        image: data.photo,  // relative path multer to be implemented
         email: data.email,
         city: data.city,
         addressarea: data.addressarea,
@@ -76,7 +102,7 @@ propertyRouter.post("/v1/addproperty", auth, (req, res) => {
     })
 })
 
-propertyRouter.put("/v1/update/:id", (req, res) => {
+propertyRouter.put("/v1/updateproperty/:id", (req, res) => {
 
 })
 
