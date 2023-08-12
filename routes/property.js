@@ -178,6 +178,20 @@ propertyRouter.put("/v1/updateproperty/:id", (req, res) => {
     })
 })
 
+///API called when sold button pressed
+propertyRouter.patch("/v1/sold/:id",(req,res)=>{
+    const soldId = req.params.id;
+    Property.findByIdAndUpdate({_id:soldId},{status : "sold"}).then(result=>{
+        res.status(200).json({
+            message:"This property has been sold"
+        })
+    }).catch(err=>{
+        res.status(400).json({
+            message: "Failed"
+        })
+    })
+})
+
 propertyRouter.delete("/v1/:id", (req, res) => {
     Property.deleteOne({_id:req.params.id}).then(response=>{
         if(response.deletedCount){

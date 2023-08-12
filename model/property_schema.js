@@ -4,6 +4,9 @@ const User = require('./user')
 const propertySchema = mongoose.Schema({
     user : {type:mongoose.Schema.Types.ObjectId,ref : User},    
     ppdid: { type: String },
+    views : {type:String},
+    daysleft : {type:String},
+    status : {type:String},
     property_type: { type: String, required: true },
     price: { type: String, required: true },
     property_age: { type: String, required: true },
