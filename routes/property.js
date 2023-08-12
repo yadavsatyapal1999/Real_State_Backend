@@ -15,6 +15,7 @@ const storage = multer.diskStorage({
 })
 const upload = multer({storage});
 
+////To get property list on home pagfrontend
 propertyRouter.get("/v1/getproperty", (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 10;
@@ -34,6 +35,28 @@ propertyRouter.get("/v1/getproperty", (req, res) => {
     })
 })
 
+//Get API for search
+propertyRouter.get("/v1/getproperty/:id",(req,res)=>{
+    const id = req.params.id;
+
+    Property.findOne({_id:id}).then(result=>{
+        if(result){
+            res.status(200).json({
+                data : result
+            })
+        }else{
+            res.status(400).json({
+                message:"Id not Found"
+            })
+        }
+    }).catch(err=>{
+        res.status(500).json({
+            message: "Internal server error!!"
+        })
+    })    
+})
+
+///post API for Add New Property
 propertyRouter.post("/v1/addproperty",upload.single("propertyimage"),(req, res) => {
 
     // const ppd_id = "PPD";
@@ -63,7 +86,7 @@ propertyRouter.post("/v1/addproperty",upload.single("propertyimage"),(req, res) 
         property_approved: data.property_approved,
         bank_lone: data.bank_lone,
         length: data.length,
-        breadth: data.breath,
+        breadth: data.breadth,
         area: area,
         area_unit: data.area_unit,
         bhk: data.bhk,
@@ -103,11 +126,75 @@ propertyRouter.post("/v1/addproperty",upload.single("propertyimage"),(req, res) 
 })
 
 propertyRouter.put("/v1/updateproperty/:id", (req, res) => {
-
+    const id = req.params.id;
+    const data = req.body;
+    const area = parseInt(data.length) * parseInt(data.breadth);
+    Property.findByIdAndUpdate({_id:id},{
+        property_type: data.property_type,
+        price: data.price,
+        property_age: data.property_age,
+        property_description: data.property_description,
+        negotiable: data.negotiable,
+        ownerShip: data.ownerShip,
+        property_approved: data.property_approved,
+        bank_lone: data.bank_lone,
+        length: data.length,
+        breadth: data.breadth,
+        area: area,
+        area_unit: data.area_unit,
+        bhk: data.bhk,
+        floor: data.floor,
+        attached: data.attached,
+        western: data.western,
+        furnished: data.furnished,
+        parking: data.parking,
+        lift: data.lift,
+        electricity: data.electricity,
+        facing: data.facing,
+        owner_name: data.owner_name,
+        mobile: data.mobile,
+        postedby: data.postedby,
+        saletype: data.saletype,
+        featured: data.featured,
+        ppdpackage: data.ppdpackage,
+        email: data.email,
+        city: data.city,
+        addressarea: data.addressarea,
+        pincode: data.pincode,
+        address: data.address,
+        landmark: data.landmark,
+        longitude: data.longitude,
+        latitude: data.latitude
+    }).then(updatedProp=>{
+        res.status(200).json({
+            message : "Updated SuccessFully",
+            updateddata : updatedProp
+        })
+    }).catch(err=>{
+        res.status(400).json({
+            message: "Failed to Update",
+            ErrDesc : err
+        })
+    })
 })
 
 propertyRouter.delete("/v1/:id", (req, res) => {
-
+    Property.deleteOne({_id:req.params.id}).then(response=>{
+        if(response.deletedCount){
+            res.status(200).json({
+                message: "Deleted Successfully",
+                data : response
+            })
+        }else{
+            res.status(400).json({
+                message : "Id not found"
+            })
+        }
+    }).catch(err=>{
+        res.status(500).json({
+            message:"Internal server error.."
+        })
+    })
 })
 
 
