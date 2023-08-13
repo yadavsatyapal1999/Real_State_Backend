@@ -36,7 +36,7 @@ propertyRouter.get("/v1/getproperty",auth, (req, res) => {
 })
 
 //Get API for search
-propertyRouter.get("/v1/getproperty/:id",(req,res)=>{
+propertyRouter.get("/v1/getproperty/:id",auth,(req,res)=>{
     const id = req.params.id;
 
     Property.findOne({_id:id}).then(result=>{
@@ -126,10 +126,10 @@ propertyRouter.post("/v1/addproperty",upload.single("propertyimage"),(req, res) 
 })
 
 propertyRouter.put("/v1/updateproperty/:id", (req, res) => {
-    const id = req.params.id;
     const data = req.body;
     const area = parseInt(data.length) * parseInt(data.breadth);
-    Property.findByIdAndUpdate({_id:id},{
+    Property.findByIdAndUpdate({_id:req.params.id},
+        {$set : {
         property_type: data.property_type,
         price: data.price,
         property_age: data.property_age,
@@ -165,7 +165,8 @@ propertyRouter.put("/v1/updateproperty/:id", (req, res) => {
         landmark: data.landmark,
         longitude: data.longitude,
         latitude: data.latitude
-    }).then(updatedProp=>{
+    }}
+    ,{new:true}).then(updatedProp=>{
         res.status(200).json({
             message : "Updated SuccessFully",
             updateddata : updatedProp
@@ -181,7 +182,7 @@ propertyRouter.put("/v1/updateproperty/:id", (req, res) => {
 ///API called when sold button pressed
 propertyRouter.patch("/v1/sold/:id",auth,(req,res)=>{
     const soldId = req.params.id;
-    Property.findByIdAndUpdate({_id:soldId},{status : "sold"}).then(result=>{
+    Property.findByIdAndUpdate({_id:soldId},{status : "sold",daysleft : 0}).then(result=>{
         res.status(200).json({
             message:"This property has been sold"
         })
@@ -192,7 +193,7 @@ propertyRouter.patch("/v1/sold/:id",auth,(req,res)=>{
     })
 })
 
-propertyRouter.delete("/v1/:id", (req, res) => {
+propertyRouter.delete("/v1/:id",auth, (req, res) => {
     Property.deleteOne({_id:req.params.id}).then(response=>{
         if(response.deletedCount){
             res.status(200).json({

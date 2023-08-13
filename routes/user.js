@@ -51,7 +51,10 @@ userRouter.post("/v1/login",(req,res)=>{
                     })
                     res.status(200).json({
                         message : "Login credential matched!!",
-                        Token : jwtToken
+                        token : jwtToken,
+                        name: user.email.split("@")[0],
+                        email: user.email
+                        
                     })
                 }else{
                     res.status(400).json({
