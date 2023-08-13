@@ -76,8 +76,11 @@ userRouter.post("/v1/login", (req, res) => {
                         expiresIn: "24h"
                     })
                     res.status(200).json({
-                        message: "Login credential matched!!",
-                        Token: jwtToken
+                        message : "Login credential matched!!",
+                        token : jwtToken,
+                        name: user.email.split("@")[0],
+                        email: user.email
+                        
                     })
                 } else {
                     res.status(400).json({

@@ -52,8 +52,8 @@ propertyRouter.get("/v1/getproperty",auth, (req, res) => {
 
 
 //Get API for search
-propertyRouter.get("/v1/getproperty/:id", (req, res) => {
-    const id = req.params.id; // looks into param for id
+propertyRouter.get("/v1/getproperty/:id",auth,(req,res)=>{
+    const id = req.params.id;
 
     Property.findOne({ _id: id }).then(result => {
         if (result) {
@@ -183,10 +183,9 @@ propertyRouter.post("/v1/addproperty", auth, upload.single("propertyimage"), asy
 
 
 propertyRouter.put("/v1/updateproperty/:id", (req, res) => {
-    const id = req.params.id;
     const data = req.body;
     const area = parseInt(data.length) * parseInt(data.breadth);
-    Property.findByIdAndUpdate({ _id: id }, {
+    Property.findByIdAndUpdate({_id:id},{
         property_type: data.property_type,
         price: data.price,
         property_age: data.property_age,
@@ -222,7 +221,7 @@ propertyRouter.put("/v1/updateproperty/:id", (req, res) => {
         landmark: data.landmark,
         longitude: data.longitude,
         latitude: data.latitude
-    }).then(updatedProp => {
+    }).then(updatedProp=>{
         res.status(200).json({
             message: "Updated SuccessFully",
             updateddata: updatedProp
@@ -240,7 +239,7 @@ propertyRouter.put("/v1/updateproperty/:id", (req, res) => {
 propertyRouter.patch("/v1/sold/:id",auth,(req,res)=>{
 
     const soldId = req.params.id;
-    Property.findByIdAndUpdate({ _id: soldId }, { status: "sold" }).then(result => {
+    Property.findByIdAndUpdate({_id:soldId},{status : "sold"}).then(result=>{
         res.status(200).json({
             message: "This property has been sold"
         })
@@ -258,8 +257,8 @@ propertyRouter.patch("/v1/sold/:id",auth,(req,res)=>{
 
 
 propertyRouter.delete("/v1/:id", (req, res) => {
-    Property.deleteOne({ _id: req.params.id }).then(response => {
-        if (response.deletedCount) {
+    Property.deleteOne({_id:req.params.id}).then(response=>{
+        if(response.deletedCount){
             res.status(200).json({
                 message: "Deleted Successfully",
                 data: response
