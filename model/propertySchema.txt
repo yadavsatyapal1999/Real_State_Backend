@@ -7,7 +7,7 @@ price
 property_age
 ownerShip
 bank_lone
-area
+ //area
 furnished
 facing
 owner_name
