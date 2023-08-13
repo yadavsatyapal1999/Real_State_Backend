@@ -2,11 +2,12 @@ const mongoose = require("mongoose");
 const User = require('./user')
 
 const propertySchema = mongoose.Schema({
-    user : {type:mongoose.Schema.Types.ObjectId,ref : User},    
+    user: { type: mongoose.Schema.Types.ObjectId, ref: User },
+    unique_id: { type: String, required: true },
     ppdid: { type: String },
-    views : {type:String},
-    daysleft : {type:String},
-    status : {type:String},
+    views: { type: String },
+    daysleft: { type: String },
+    status: { type: String },
     property_type: { type: String, required: true },
     price: { type: String, required: true },
     property_age: { type: String, required: true },
@@ -17,7 +18,7 @@ const propertySchema = mongoose.Schema({
     bank_lone: { type: String, required: true },
     length: { type: String },
     breadth: { type: String },
-    area: { type: String},
+    area: { type: String },
     area_unit: { type: String },
     bhk: { type: String },
     floor: { type: String },
