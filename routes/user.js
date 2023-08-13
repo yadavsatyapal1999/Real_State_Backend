@@ -21,7 +21,7 @@ userRouter.post("/v1/register",async (req, res) => {
             previousUserID+=lastUserID.unique_id[i]
           }
           newUserID = "06PPD" +(parseInt(previousUserID) +1)
-          console.log(newUserID);
+          
     }else{
         newUserID = "06PPD100";
     }
@@ -62,14 +62,15 @@ userRouter.post("/v1/register",async (req, res) => {
 userRouter.post("/v1/login", (req, res) => {
     const loginCred = req.body;
     User.findOne({ email: loginCred.email }).then(user => {
-        if (user) {
+        if (user) {  // will give response from DB
+
             // if user found then it will encrypt password and compare with DB password 
             bcrypt.compare(loginCred.password, user.password).then(response => {
                 if (response) {  // password is correct then create web token
                     const jwtToken = jwt.sign({
                         email: user.email,
                         id: user._id,
-                        userid:response.unique_id  
+                        userid:user.unique_id  // pssing unique id to token
                     },
                         process.env.SECRET_KEY, {
                         expiresIn: "24h"

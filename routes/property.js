@@ -109,7 +109,7 @@ propertyRouter.post("/v1/addproperty", auth, upload.single("propertyimage"), asy
     const propertyData = new Property({ //add new property
 
         user: req.id,     // get id from token
-        unique_id:req.id,   // get id from token
+        unique_id:req.unique_id,   // get id from token
         ppdid: ppd_id,
         views: views,
         daysleft: daysleft,
