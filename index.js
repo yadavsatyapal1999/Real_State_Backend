@@ -3,9 +3,12 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const propertyRouter = require("./routes/property");
+const cors = require("cors");
 const userRouter = require("./routes/user");
 require('dotenv').config();
 const app = express();
+app.use(cors());
+app.use(express.static("uploads"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 

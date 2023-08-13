@@ -24,7 +24,9 @@ const upload = multer({ storage });
 
 ////To get property list on home page frontend
 
-propertyRouter.get("/v1/getproperty", (req, res) => {
+
+propertyRouter.get("/v1/getproperty",auth, (req, res) => {
+
     const page = parseInt(req.query.page) || 1;
     const limit = 10;
     const skip = (page - 1) * limit;
@@ -234,7 +236,9 @@ propertyRouter.put("/v1/updateproperty/:id", (req, res) => {
 })
 
 ///API called when sold button pressed
-propertyRouter.patch("/v1/sold/:id", (req, res) => {
+
+propertyRouter.patch("/v1/sold/:id",auth,(req,res)=>{
+
     const soldId = req.params.id;
     Property.findByIdAndUpdate({ _id: soldId }, { status: "sold" }).then(result => {
         res.status(200).json({
