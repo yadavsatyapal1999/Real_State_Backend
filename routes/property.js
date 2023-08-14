@@ -241,7 +241,7 @@ propertyRouter.put("/v1/updateproperty/:id", (req, res) => {
 propertyRouter.patch("/v1/sold/:id",auth,(req,res)=>{
 
     const soldId = req.params.id;
-    Property.findByIdAndUpdate({_id:soldId},{status : "sold"}).then(result=>{
+    Property.findByIdAndUpdate({_id:soldId},{status : "sold",daysleft: 0}).then(result=>{
         res.status(200).json({
             message: "This property has been sold"
         })

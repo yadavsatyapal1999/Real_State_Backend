@@ -7,24 +7,7 @@ require('dotenv').config();
 
 
 userRouter.post("/v1/register",async (req, res) => {
-    let newUserID ; 
-    // 
-    let previousUserID =0; // it will store digit of last inserted of ppd_id
-
-    // would give last registred user
-    const lastUserID = await User.findOne({}, {}, { sort: { _id: -1 } }, function (err, userID) {
-        return userID;
-    });
-    
-    if(lastUserID != null){
-          for(let i=5 ;i<lastUserID.unique_id.length ;i++){
-            previousUserID+=lastUserID.unique_id[i]
-          }
-          newUserID = "06PPD" +(parseInt(previousUserID) +1)
-          
-    }else{
-        newUserID = "06PPD100";
-    }
+   
 
     const { email, password } = req.body;
     bcrypt.hash(password, 10).then(hashPass => { // encrypting password  times with bcrypt
@@ -32,7 +15,6 @@ userRouter.post("/v1/register",async (req, res) => {
         const userData = new User({
             email,
             password: hashPass,
-           unique_id:newUserID
         })
        
         // saving email and encrypted password to DB
@@ -40,7 +22,6 @@ userRouter.post("/v1/register",async (req, res) => {
             res.status(200).json({
                 message: "User Created successfully!!",
                 data: result,
-                us:newUserID
             })
         }).catch(err => {
             // handle error if email is not found unique
@@ -59,7 +40,25 @@ userRouter.post("/v1/register",async (req, res) => {
 })
 
 
-userRouter.post("/v1/login", (req, res) => {
+userRouter.post("/v1/login", async (req, res) => {
+    let newUserID ; 
+    // 
+    let previousUserID =0; // it will store digit of last inserted of ppd_id
+
+    // would give last registred user
+    const lastUserID = await User.findOne({}, {}, { sort: { _id: -1 } }, function (err, userID) {
+        return userID;
+    });
+    
+    if(lastUserID != null){
+          for(let i=5 ;i<lastUserID.unique_id.length ;i++){
+            previousUserID+=lastUserID.unique_id[i]
+          }
+          newUserID = "06PPD" +(parseInt(previousUserID) +1)
+          
+    }else{
+        newUserID = "06PPD100";
+    }
     const loginCred = req.body;
     User.findOne({ email: loginCred.email }).then(user => {
         if (user) {  // will give response from DB
@@ -77,10 +76,10 @@ userRouter.post("/v1/login", (req, res) => {
                     })
                     res.status(200).json({
                         message : "Login credential matched!!",
-                        token : jwtToken,
+                        Token : jwtToken,
                         name: user.email.split("@")[0],
-                        email: user.email
-                        
+                        email: user.email,
+                        userId : newUserID
                     })
                 } else {
                     res.status(400).json({
