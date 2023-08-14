@@ -82,6 +82,7 @@ propertyRouter.get("/v1/getproperty/:id",auth,(req,res)=>{
 
 propertyRouter.post("/v1/addproperty", auth, upload.single("propertyimage"), async (req, res) => {
 
+    console.log("reached post")
     let newppdid = 0; // it will store digit of last inserted of ppd_id
     let ppd_id; // 
 
@@ -105,7 +106,7 @@ propertyRouter.post("/v1/addproperty", auth, upload.single("propertyimage"), asy
     }
 
     const data = req.body;  // need to provide data in body
-    const area = parseInt(data.length) * parseInt(data.breadth);
+    
     const views = parseInt(Math.random() * 30);
     const daysleft = parseInt(Math.random() * 40);
     const propertyData = new Property({ //add new property
@@ -117,7 +118,7 @@ propertyRouter.post("/v1/addproperty", auth, upload.single("propertyimage"), asy
         daysleft: daysleft,
         status: "unsold",
 
-        image: req.file.filename, // coming from multer
+       image: req.file.filename, // coming from multer
         property_type: data.property_type,
         price: data.price,
         property_age: data.property_age,
@@ -126,10 +127,10 @@ propertyRouter.post("/v1/addproperty", auth, upload.single("propertyimage"), asy
         negotiable: data.negotiable,
         ownerShip: data.ownerShip,
         property_approved: data.property_approved,
-        bank_lone: data.bank_lone,
+        bank_loan: data.bank_loan,
         length: data.length,
         breadth: data.breadth,
-        area: area,
+        area: data.area,
 
         area_unit: data.area_unit,
         bhk: data.bhk,
@@ -171,6 +172,7 @@ propertyRouter.post("/v1/addproperty", auth, upload.single("propertyimage"), asy
                 message: "unable to save data",
                 // detail: err   //this line to be used to check error
             })
+            console.log(err);
         })
 })
 
