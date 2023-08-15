@@ -53,8 +53,7 @@ propertyRouter.get("/v1/getproperty", auth, (req, res) => {
 
 //Get API for search
 
-propertyRouter.get("/v1/getproperty/:id", auth, (req, res) => {
-    const id = req.params.id;
+
 
 propertyRouter.get("/v1/getproperty/:id",auth,(req,res)=>{
     const id = req.params.id.toUpperCase();
@@ -187,67 +186,18 @@ propertyRouter.post("/v1/addproperty", auth, upload.single("propertyimage"), asy
 
 
 
-/*
 
-propertyRouter.put("/v1/updateproperty/:id", (req, res) => {
-    const data = req.body;
-    /*
-    Property.findByIdAndUpdate({_id:id},{
-      /*  property_type: data.property_type,
-        price: data.price,
-        property_age: data.property_age,
-        property_description: data.property_description,
-        negotiable: data.negotiable,
-        ownerShip: data.ownerShip,
-        property_approved: data.property_approved,
-        bank_lone: data.bank_lone,
-        length: data.length,
-        breadth: data.breadth,
-        area: data.area,
-        area_unit: data.area_unit,
-        bhk: data.bhk,
-        floor: data.floor,
-        attached: data.attached,
-        western: data.western,
-        furnished: data.furnished,
-        parking: data.parking,
-        lift: data.lift,
-        electricity: data.electricity,
-        facing: data.facing,
-        owner_name: data.owner_name,
-        mobile: data.mobile,
-        postedby: data.postedby,
-        saletype: data.saletype,
-        featured: data.featured,
-        ppdpackage: data.ppdpackage,
-        email: data.email,
-        city: data.city,
-        addressarea: data.addressarea,
-        pincode: data.pincode,
-        address: data.address,
-        landmark: data.landmark,
-        longitude: data.longitude,
-      
-    })
-   
-   .then(updatedProp=>{
-        res.status(200).json({
-            message: "Updated SuccessFully",
-            updateddata: updatedProp
-        })
-    }).catch(err => {
-        res.status(400).json({
-            message: "Failed to Update",
-            ErrDesc: err
-        })
-    })
-})
-*/
-propertyRouter.put("/v1/updateproperty/:ppdid", async (req, res) => {
+
+
+
+propertyRouter.put("/v1/updateproperty/:id",upload.single("propertyimage"), async (req, res) => {
 console.log("update")
     try {
-        const propertyId = req.params.ppdid.toUpperCase(); // would look into param for data
-        const updatedData = req.body;
+        const propertyId = req.params.id; // would look into param for data
+        let updatedData = req.body;
+        if(req.file){
+         updatedData.image = req.file.filename
+        }
         const updateStatus = await Property.findByIdAndUpdate(propertyId, updatedData, { new: true });
         if (!updateStatus) {
             res.status(400).json({
@@ -255,6 +205,7 @@ console.log("update")
             })
         }
         res.status(200).json(updateStatus) // would return updated data
+        console.log(updateStatus)
     }
     catch (err) {
         console.log(err);

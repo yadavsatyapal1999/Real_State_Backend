@@ -7,7 +7,24 @@ require('dotenv').config();
 
 
 userRouter.post("/v1/register",async (req, res) => {
-   
+    let newUserID ; 
+    // 
+    let previousUserID =0; // it will store digit of last inserted of ppd_id
+
+    // would give last registred user
+    const lastUserID = await User.findOne({}, {}, { sort: { _id: -1 } }, function (err, userID) {
+        return userID;
+    });
+    
+    if(lastUserID != null){
+          for(let i=5 ;i<lastUserID.unique_id.length ;i++){
+            previousUserID+=lastUserID.unique_id[i]
+          }
+          newUserID = "06PPD" +(parseInt(previousUserID) +1)
+          
+    }else{
+        newUserID = "06PPD100";
+    }
 
     const { email, password } = req.body;
     bcrypt.hash(password, 10).then(hashPass => { // encrypting password  times with bcrypt
@@ -15,6 +32,7 @@ userRouter.post("/v1/register",async (req, res) => {
         const userData = new User({
             email,
             password: hashPass,
+            unique_id : newUserID
         })
        
         // saving email and encrypted password to DB
