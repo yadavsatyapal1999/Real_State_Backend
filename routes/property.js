@@ -8,7 +8,7 @@ const path = require("path");
 
 
 
-
+//  Giving path and file name  for newly added file in multer
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "uploads")
@@ -25,7 +25,7 @@ const upload = multer({ storage });
 ////To get property list on home page frontend
 
 
-propertyRouter.get("/v1/getproperty",auth, (req, res) => {
+propertyRouter.get("/v1/getproperty", auth, (req, res) => {
 
     const page = parseInt(req.query.page) || 1;
     const limit = 10;
@@ -52,8 +52,13 @@ propertyRouter.get("/v1/getproperty",auth, (req, res) => {
 
 
 //Get API for search
+
+propertyRouter.get("/v1/getproperty/:id", auth, (req, res) => {
+    const id = req.params.id;
+
 propertyRouter.get("/v1/getproperty/:id",auth,(req,res)=>{
     const id = req.params.id.toUpperCase();
+
 
     Property.findOne({ ppdid: id }).then(result => {
         if (result) {
@@ -87,11 +92,11 @@ propertyRouter.post("/v1/addproperty", auth, upload.single("propertyimage"), asy
     let ppd_id; // 
 
     // This function will return the last document inserted into the DB
-   const existingProperty = await Property.findOne({}, {}, { sort: { _id: -1 } }, function (err, post) {
+    const existingProperty = await Property.findOne({}, {}, { sort: { _id: -1 } }, function (err, post) {
         return post;
     });
-    
-    
+
+
     if (existingProperty !== null) {
 
         for (let i = 3; i < existingProperty.ppdid.length; i++) {
@@ -102,23 +107,23 @@ propertyRouter.post("/v1/addproperty", auth, upload.single("propertyimage"), asy
         ppd_id = "PPD" + (parseInt(newppdid) + 1);  // increment for new insert
 
     } else {
-        ppd_id = "PPD" + 1000; // if no previous property in DB
+        ppd_id = "PPD" + 1000; // if there is not any previous  property in DB
     }
 
     const data = req.body;  // need to provide data in body
-    
+
     const views = parseInt(Math.random() * 30);
     const daysleft = parseInt(Math.random() * 40);
     const propertyData = new Property({ //add new property
 
-        user: req.id,     // get id from token
-        unique_id:req.unique_id,   // get id from token
+        user: req.id,     // get id from token passed during auth
+        unique_id: req.unique_id,   // get id from token auth
         ppdid: ppd_id,
         views: views,
         daysleft: daysleft,
         status: "unsold",
 
-       image: req.file.filename, // coming from multer
+        image: req.file.filename, // coming from multer
         property_type: data.property_type,
         price: data.price,
         property_age: data.property_age,
@@ -129,7 +134,7 @@ propertyRouter.post("/v1/addproperty", auth, upload.single("propertyimage"), asy
         property_approved: data.property_approved,
         bank_loan: data.bank_loan,
         length: data.length,
-        breadth: data.breadth,
+        breath: data.breath,
         area: data.area,
 
         area_unit: data.area_unit,
@@ -182,13 +187,13 @@ propertyRouter.post("/v1/addproperty", auth, upload.single("propertyimage"), asy
 
 
 
-
+/*
 
 propertyRouter.put("/v1/updateproperty/:id", (req, res) => {
     const data = req.body;
-    const area = parseInt(data.length) * parseInt(data.breadth);
+    /*
     Property.findByIdAndUpdate({_id:id},{
-        property_type: data.property_type,
+      /*  property_type: data.property_type,
         price: data.price,
         property_age: data.property_age,
         property_description: data.property_description,
@@ -198,7 +203,7 @@ propertyRouter.put("/v1/updateproperty/:id", (req, res) => {
         bank_lone: data.bank_lone,
         length: data.length,
         breadth: data.breadth,
-        area: area,
+        area: data.area,
         area_unit: data.area_unit,
         bhk: data.bhk,
         floor: data.floor,
@@ -222,8 +227,10 @@ propertyRouter.put("/v1/updateproperty/:id", (req, res) => {
         address: data.address,
         landmark: data.landmark,
         longitude: data.longitude,
-        latitude: data.latitude
-    }).then(updatedProp=>{
+      
+    })
+   
+   .then(updatedProp=>{
         res.status(200).json({
             message: "Updated SuccessFully",
             updateddata: updatedProp
@@ -235,13 +242,46 @@ propertyRouter.put("/v1/updateproperty/:id", (req, res) => {
         })
     })
 })
+*/
+propertyRouter.put("/v1/updateproperty/:ppdid", async (req, res) => {
+console.log("update")
+    try {
+        const propertyId = req.params.ppdid.toUpperCase(); // would look into param for data
+        const updatedData = req.body;
+        const updateStatus = await Property.findByIdAndUpdate(propertyId, updatedData, { new: true });
+        if (!updateStatus) {
+            res.status(400).json({
+                message: "No such Id found"
+            })
+        }
+        res.status(200).json(updateStatus) // would return updated data
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({
+            message: "internal server error"
+        })
+    }
+
+})
+
+
+
+
+
+
+
+
+
+
+
 
 ///API called when sold button pressed
 
-propertyRouter.patch("/v1/sold/:id",auth,(req,res)=>{
+propertyRouter.patch("/v1/sold/:id", auth, (req, res) => {
 
     const soldId = req.params.id;
-    Property.findByIdAndUpdate({_id:soldId},{status : "sold",daysleft: 0}).then(result=>{
+    Property.findByIdAndUpdate({ _id: soldId }, { status: "sold", daysleft: 0 }).then(result => {
         res.status(200).json({
             message: "This property has been sold"
         })
@@ -259,8 +299,8 @@ propertyRouter.patch("/v1/sold/:id",auth,(req,res)=>{
 
 
 propertyRouter.delete("/v1/:id", (req, res) => {
-    Property.deleteOne({_id:req.params.id}).then(response=>{
-        if(response.deletedCount){
+    Property.deleteOne({ _id: req.params.id }).then(response => {
+        if (response.deletedCount) {
             res.status(200).json({
                 message: "Deleted Successfully",
                 data: response
