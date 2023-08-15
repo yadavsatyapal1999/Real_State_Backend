@@ -52,10 +52,15 @@ propertyRouter.get("/v1/getproperty", auth, (req, res) => {
 
 
 //Get API for search
+
 propertyRouter.get("/v1/getproperty/:id", auth, (req, res) => {
     const id = req.params.id;
 
-    Property.findOne({ _id: id }).then(result => {
+propertyRouter.get("/v1/getproperty/:id",auth,(req,res)=>{
+    const id = req.params.id.toUpperCase();
+
+
+    Property.findOne({ ppdid: id }).then(result => {
         if (result) {
             res.status(200).json({
                 data: result
