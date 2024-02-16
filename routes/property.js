@@ -191,7 +191,7 @@ propertyRouter.post("/v1/addproperty", auth, upload.single("propertyimage"), asy
 
 
 propertyRouter.put("/v1/updateproperty/:id",upload.single("propertyimage"), async (req, res) => {
-console.log("update")
+// console.log("update")
     try {
         const propertyId = req.params.id; // would look into param for data
         let updatedData = req.body;
